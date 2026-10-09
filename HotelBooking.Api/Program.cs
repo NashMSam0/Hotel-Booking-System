@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Text;
 using System.Text.Json.Serialization;
 using HotelBooking.Api.Services;
@@ -99,7 +100,23 @@ if (usePostgres)
 {
     using var scope = app.Services.CreateScope();
     var pg = scope.ServiceProvider.GetRequiredService<HotelDbContext>();
-    await pg.Database.EnsureCreatedAsync();
+    var csb = new DbConnectionStringBuilder
+    {
+        ConnectionString = builder.Configuration.GetConnectionString("Default")
+    };
+    var host = csb.TryGetValue("Host", out var h) ? h : "(unknown host)";
+    var port = csb.TryGetValue("Port", out var p) ? p : "(unknown port)";
+    try
+    {
+        app.Logger.LogInformation("Postgres init: connecting to {Host}:{Port}. Expecting the Supabase DIRECT (5432) connection string.", host, port);
+        await pg.Database.EnsureCreatedAsync();
+        app.Logger.LogInformation("Postgres schema ready.");
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "FATAL: cannot reach Postgres at {Host}:{Port}. Check ConnectionStrings__Default is the Supabase DIRECT (port 5432, Username=postgres) string with the correct password, and the Supabase project is active.", host, port);
+        throw;
+    }
 }
 
 await DataSeeder.SeedAsync(app.Services);
