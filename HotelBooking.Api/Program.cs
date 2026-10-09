@@ -5,6 +5,7 @@ using HotelBooking.Data.DbContexts;
 using HotelBooking.Data.EntityModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -30,8 +31,16 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+var dbProvider = builder.Configuration.GetValue<string>("Database:Provider") ?? "SqlServer";
+var usePostgres = dbProvider.Equals("Postgres", StringComparison.OrdinalIgnoreCase)
+    || dbProvider.Equals("Npgsql", StringComparison.OrdinalIgnoreCase);
+
 builder.Services.AddDbContext<HotelDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+{
+    var cs = builder.Configuration.GetConnectionString("Default");
+    if (usePostgres) o.UseNpgsql(cs);
+    else o.UseSqlServer(cs);
+});
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(o =>
     {
@@ -67,6 +76,13 @@ builder.Services.AddSingleton<IEmailSender>(sp =>
         ? (IEmailSender)new SmtpEmailSender(sp.GetRequiredService<IOptions<EmailOptions>>())
         : new FileEmailSender(sp.GetRequiredService<IOptions<EmailOptions>>(), sp.GetRequiredService<ILogger<FileEmailSender>>()));
 builder.Services.AddRazorPages(); // server-rendered pages (e.g. /dashboard) alongside the JSON API + Angular SPA
+// Trust Render/Cloud TLS-terminating proxies so https redirection doesn't loop.
+builder.Services.Configure<ForwardedHeadersOptions>(o =>
+{
+    o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    o.KnownNetworks.Clear();
+    o.KnownProxies.Clear();
+});
 builder.Services.AddCors(o => o.AddPolicy("ng", p =>
 {
     var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
@@ -76,6 +92,16 @@ builder.Services.AddCors(o => o.AddPolicy("ng", p =>
 
 var app = builder.Build();
 
+// Free Postgres hosts have no migration history: create a fresh schema from the
+// current model (including HasData seed). SQL Server keeps the versioned flow:
+// run `dotnet ef database update` against it instead.
+if (usePostgres)
+{
+    using var scope = app.Services.CreateScope();
+    var pg = scope.ServiceProvider.GetRequiredService<HotelDbContext>();
+    await pg.Database.EnsureCreatedAsync();
+}
+
 await DataSeeder.SeedAsync(app.Services);
 
 if (app.Environment.IsDevelopment())
@@ -84,6 +110,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseCors("ng");
 app.UseAuthentication();

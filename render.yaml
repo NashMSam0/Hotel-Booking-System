@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: kudzis-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    # Hits the DB too, so a 200 here means API + database are both up.
+    healthCheckPath: /api/rooms
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Database__Provider
+        value: Postgres
+      # Paste your Supabase (direct, port 5432) connection string in the dashboard.
+      # Format: Host=db.xxx.supabase.co;Port=5432;Database=postgres;Username=postgres;Password=XXX;SSL Mode=Require;Trust Server Certificate=true
+      - key: ConnectionStrings__Default
+        sync: false
+      - key: Jwt__Key
+        generateValue: true
+      - key: Cors__AllowedOrigins__0
+        value: https://YOUR-SITE.vercel.app
+      # File mode keeps .eml receipts on Render's ephemeral disk (lost on restart).
+      # For real mail, use Email__Method=Smtp with a free Brevo/SMTP account.
+      - key: Email__Method
+        value: File
