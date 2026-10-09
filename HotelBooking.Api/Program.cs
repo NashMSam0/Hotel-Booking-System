@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -118,7 +119,7 @@ if (usePostgres)
         if (marker == 0)
         {
             app.Logger.LogInformation("Postgres schema missing — creating tables + seed data...");
-            await pg.Database.GetService<IRelationalDatabaseCreator>().CreateAsync();
+            await pg.GetService<IRelationalDatabaseCreator>().CreateAsync();
         }
         else
         {
