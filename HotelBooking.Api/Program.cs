@@ -68,7 +68,11 @@ builder.Services.AddSingleton<IEmailSender>(sp =>
         : new FileEmailSender(sp.GetRequiredService<IOptions<EmailOptions>>(), sp.GetRequiredService<ILogger<FileEmailSender>>()));
 builder.Services.AddRazorPages(); // server-rendered pages (e.g. /dashboard) alongside the JSON API + Angular SPA
 builder.Services.AddCors(o => o.AddPolicy("ng", p =>
-    p.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod()));
+{
+    var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+        ?? ["http://localhost:4200"];
+    p.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod();
+}));
 
 var app = builder.Build();
 
