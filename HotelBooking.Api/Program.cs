@@ -114,7 +114,7 @@ if (usePostgres)
         // Supabase ships its own tables, so EF's "any table exists" check lies.
         // Check for OUR marker table instead, and create explicitly when missing.
         var marker = await pg.Database.SqlQueryRaw<long>(
-            "SELECT COUNT(*) FROM pg_tables WHERE schemaname = 'public' AND tablename = 'AspNetRoles'")
+            "SELECT COUNT(*) AS \"Value\" FROM pg_tables WHERE schemaname = 'public' AND tablename = 'AspNetRoles'")
             .SingleAsync();
         if (marker == 0)
         {
