@@ -18,7 +18,7 @@ services:
       - key: Jwt__Key
         generateValue: true
       - key: Cors__AllowedOrigins__0
-        value: https://YOUR-SITE.vercel.app
+        value: https://hotel-booking-system-kappa-eight.vercel.app
       # File mode keeps .eml receipts on Render's ephemeral disk (lost on restart).
       # For real mail, use Email__Method=Smtp with a free Brevo/SMTP account.
       - key: Email__Method
