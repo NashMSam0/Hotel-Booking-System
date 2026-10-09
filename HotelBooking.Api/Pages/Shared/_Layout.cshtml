@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kudzis Bookings — @ViewData["Title"]</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #faf6ec; color: #1c2b26; }
+        header { background: #0a2e28; color: #fff; padding: 14px 24px; display: flex; gap: 20px; align-items: center; }
+        header a { color: #e7b96a; text-decoration: none; font-weight: 600; }
+        main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0 28px; }
+        .stat { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 10px rgba(10,46,40,.08); }
+        .stat b { font-size: 28px; color: #0a2e28; display: block; }
+        .stat span { color: #6b7a72; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; margin-bottom: 28px; }
+        th { background: #0a2e28; color: #fff; text-align: left; padding: 10px 12px; font-size: 13px; }
+        td { padding: 9px 12px; border-top: 1px solid #eee7d3; font-size: 13.5px; }
+        h2 { color: #0a2e28; }
+    </style>
+</head>
+<body>
+    <header>
+        <strong>Kudzis Bookings</strong>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/swagger">API (Swagger)</a>
+    </header>
+    <main>@RenderBody()</main>
+</body>
+</html>

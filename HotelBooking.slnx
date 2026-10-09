@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="HotelBooking.Api/HotelBooking.Api.csproj" />
+  <Project Path="HotelBooking.Core/HotelBooking.Core.csproj" />
+  <Project Path="HotelBooking.Data/HotelBooking.Data.csproj" />
+</Solution>

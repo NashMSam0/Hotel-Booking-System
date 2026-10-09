@@ -1,0 +1,104 @@
+@page
+@model HotelBooking.Api.Pages.DashboardModel
+@{
+    ViewData["Title"] = "Ops Dashboard";
+}
+<h2>Ops Dashboard <small style="font-weight:400;color:#6b7a72">(server-rendered with Razor Pages)</small></h2>
+
+<div class="stats">
+    <div class="stat"><b>@Model.RoomCount</b><span>Active rooms</span></div>
+    <div class="stat"><b>@Model.ActivityCount</b><span>Active activities</span></div>
+    <div class="stat"><b>@Model.TableCount</b><span>Restaurant tables</span></div>
+    <div class="stat"><b>@Model.UpcomingRoomNights</b><span>Upcoming room bookings</span></div>
+</div>
+
+<h2>Reports</h2>
+<div class="stats">
+    <div class="stat"><b>@Model.CurrentOccupancyRate%</b><span>Occupancy (this month)</span></div>
+    <div class="stat"><b>$@Model.RevenueByMonth.Sum(x => x.Amount)</b><span>Revenue (last 6 months)</span></div>
+</div>
+
+<h2>Revenue by month</h2>
+<table>
+    <tr><th>Month</th><th style="width:60%">Revenue</th><th>Amount</th></tr>
+    @{
+        var max = Model.RevenueByMonth.Count == 0 ? 1 : Model.RevenueByMonth.Max(x => x.Amount);
+        if (max == 0) { max = 1; }
+    }
+    @foreach (var r in Model.RevenueByMonth)
+    {
+        var pct = (int)Math.Round(100 * (double)r.Amount / (double)max);
+        <tr>
+            <td>@r.Month</td>
+            <td><div style="background:#14705c;height:14px;border-radius:7px;width:@(pct)%"></div></td>
+            <td>$@r.Amount</td>
+        </tr>
+    }
+</table>
+
+<h2>Top activities</h2>
+<table>
+    <tr><th>Activity</th><th>Bookings</th><th>Revenue</th></tr>
+    @foreach (var t in Model.TopActivities)
+    {
+        <tr><td>@t.Name</td><td>@t.Bookings</td><td>$@t.Revenue</td></tr>
+    }
+</table>
+
+<h2>Recent payments</h2>
+<table>
+    <tr><th>Receipt</th><th>Kind</th><th>Booking</th><th>Amount</th><th>Method</th><th>Paid at (UTC)</th></tr>
+    @foreach (var p in Model.RecentPayments)
+    {
+        <tr><td>@p.Reference</td><td>@p.BookingKind</td><td>@p.BookingId</td><td>$@p.Amount</td><td>@p.Method</td><td>@p.PaidAt.ToString("yyyy-MM-dd HH:mm")</td></tr>
+    }
+</table>
+
+<h2>Recent room bookings</h2>
+<table>
+    <tr><th>Ref</th><th>Room</th><th>Guest</th><th>Check-in → Check-out</th><th>Total</th><th>Status</th></tr>
+    @foreach (var b in Model.RecentRooms)
+    {
+        <tr>
+            <td>@b.Reference</td>
+            <td>@b.Room?.RoomNumber</td>
+            <td>@b.GuestName</td>
+            <td>@b.CheckIn.ToString("yyyy-MM-dd") → @b.CheckOut.ToString("yyyy-MM-dd")</td>
+            <td>$@b.TotalPrice</td>
+            <td>@b.Status</td>
+        </tr>
+    }
+</table>
+
+<h2>Recent activity bookings</h2>
+<table>
+    <tr><th>Ref</th><th>Activity</th><th>Guest</th><th>Slot</th><th>People</th><th>Status</th></tr>
+    @foreach (var b in Model.RecentActivities)
+    {
+        <tr>
+            <td>@b.Reference</td>
+            <td>@b.Activity?.Name</td>
+            <td>@b.GuestName</td>
+            <td>@b.SlotStart.ToString("yyyy-MM-dd HH:mm")</td>
+            <td>@b.Participants</td>
+            <td>@b.Status</td>
+        </tr>
+    }
+</table>
+
+<h2>Recent dining bookings</h2>
+<table>
+    <tr><th>Ref</th><th>Date</th><th>Meal</th><th>Party</th><th>Table</th><th>Guest</th><th>Status</th></tr>
+    @foreach (var b in Model.RecentDining)
+    {
+        <tr>
+            <td>@b.Reference</td>
+            <td>@b.BookingDate.ToString("yyyy-MM-dd")</td>
+            <td>@b.MealType</td>
+            <td>@b.PartySize</td>
+            <td>@(b.Table?.TableNumber ?? "—")</td>
+            <td>@b.GuestName</td>
+            <td>@b.Status</td>
+        </tr>
+    }
+</table>
