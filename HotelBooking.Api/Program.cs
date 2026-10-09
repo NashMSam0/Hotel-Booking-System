@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -109,7 +110,20 @@ if (usePostgres)
     try
     {
         app.Logger.LogInformation("Postgres init: connecting to {Host}:{Port}. Expecting the Supabase DIRECT (5432) connection string.", host, port);
-        await pg.Database.EnsureCreatedAsync();
+        // Supabase ships its own tables, so EF's "any table exists" check lies.
+        // Check for OUR marker table instead, and create explicitly when missing.
+        var marker = await pg.Database.SqlQueryRaw<long>(
+            "SELECT COUNT(*) FROM pg_tables WHERE schemaname = 'public' AND tablename = 'AspNetRoles'")
+            .SingleAsync();
+        if (marker == 0)
+        {
+            app.Logger.LogInformation("Postgres schema missing — creating tables + seed data...");
+            await pg.Database.GetService<IRelationalDatabaseCreator>().CreateAsync();
+        }
+        else
+        {
+            app.Logger.LogInformation("Postgres schema already present.");
+        }
         app.Logger.LogInformation("Postgres schema ready.");
     }
     catch (Exception ex)
