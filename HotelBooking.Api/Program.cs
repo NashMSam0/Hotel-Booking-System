@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -118,8 +116,9 @@ if (usePostgres)
             .SingleAsync();
         if (marker == 0)
         {
+            // Tables-only script: the database itself already exists (we're connected to it).
             app.Logger.LogInformation("Postgres schema missing — creating tables + seed data...");
-            await pg.GetService<IRelationalDatabaseCreator>().CreateAsync();
+            await pg.Database.ExecuteSqlRawAsync(pg.Database.GenerateCreateScript());
         }
         else
         {
