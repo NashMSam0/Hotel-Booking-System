@@ -14,7 +14,7 @@ interface Destination { name: string; img: string; off: string; price: number; r
     @keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.1); } }
     @media (prefers-reduced-motion: reduce) { .hero-photo, .offer-badge { animation: none; } }
     .hero::before { content:''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(5,25,21,.78), rgba(5,25,21,.25) 60%, rgba(5,25,21,.05)); }
-    .hero-inner { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 160px 20px 130px; }
+    .hero-inner { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 125px 20px 130px; }
     .hero h1 { font-size: 56px; margin: 0; line-height: 1.05; text-shadow: 0 2px 12px rgba(0,0,0,.35); }
     .hero h1 .mem { color: #e7b96a; font-style: italic; }
     .hero p.sub { font-size: 17px; max-width: 520px; opacity: .95; }
@@ -28,11 +28,11 @@ interface Destination { name: string; img: string; off: string; price: number; r
     .offer-badge b { font-size: 26px; color: var(--blue); display: block; }
     .offer-badge small { color: var(--muted); }
 
-    .search-card { position: relative; max-width: 1080px; margin: -70px auto 0; background: rgba(255,255,255,.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.6); border-radius: 20px; box-shadow: 0 12px 40px rgba(16,28,51,.18); padding: 18px 22px; z-index: 5; }
+    .search-card { position: relative; max-width: 1080px; margin: -70px auto 0; background: rgba(255,255,255,.78); backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2); border: 1px solid rgba(255,255,255,.65); border-radius: 20px; box-shadow: 0 12px 40px rgba(16,28,51,.18); padding: 18px 22px; z-index: 5; }
     .tabs { display: flex; gap: 26px; border-bottom: 1px solid #e8eefc; margin-bottom: 14px; }
     .tabs button { border: 0; background: none; font-size: 14.5px; font-weight: 700; color: var(--muted); padding: 8px 2px; cursor: pointer; border-bottom: 3px solid transparent; }
     .tabs button.active { color: var(--blue); border-bottom-color: var(--blue); }
-    .search-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
+    .search-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
     .search-grid label { font-size: 12.5px; color: var(--muted); }
     .search-grid input { border: 0; background: #f2f6ff; font-weight: 600; }
     .search-now { height: 46px; padding: 0 26px; }
@@ -55,7 +55,7 @@ interface Destination { name: string; img: string; off: string; price: number; r
     .deal-banner { background: linear-gradient(135deg, #123a8f, #1f6ff2); border-radius: 18px; color: #fff; padding: 26px; position: relative; overflow: hidden; }
     .deal-banner img { position: absolute; right: -30px; bottom: -20px; width: 230px; opacity: .9; }
     .deal-banner h3 { font-size: 26px; margin: 0 0 6px; }
-    .deal { background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(16,28,51,.08); position: relative; }
+    .deal { background: rgba(255,255,255,.88); border: 1px solid rgba(255,255,255,.6); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(16,28,51,.08); position: relative; }
     .deal img { width: 100%; height: 150px; object-fit: cover; }
     .deal .tag { position: absolute; top: 10px; left: 10px; font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 999px; color: #fff; }
     .deal .body { padding: 12px 14px 16px; }
@@ -66,13 +66,13 @@ interface Destination { name: string; img: string; off: string; price: number; r
     .deal a { color: var(--blue); font-size: 13px; font-weight: 700; text-decoration: none; }
 
     .trust { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 16px; }
-    .trust div { background: #fff; border-radius: 14px; padding: 14px; text-align: center; box-shadow: 0 3px 12px rgba(16,28,51,.06); }
+    .trust div { background: rgba(255,255,255,.8); border: 1px solid rgba(255,255,255,.6); border-radius: 14px; padding: 14px; text-align: center; box-shadow: 0 3px 12px rgba(16,28,51,.06); }
     .trust .ic { font-size: 22px; }
     .trust b { display: block; font-size: 13.5px; margin-top: 6px; }
     .trust small { color: var(--muted); font-size: 12px; }
 
     .tests { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
-    .test { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 16px rgba(16,28,51,.08); }
+    .test { background: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.6); border-radius: 16px; padding: 20px; box-shadow: 0 4px 16px rgba(16,28,51,.08); }
     .test .q { color: var(--blue); font-size: 30px; line-height: 1; }
     .test p { font-size: 14px; color: #33415c; }
     .test .who { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
@@ -108,19 +108,19 @@ interface Destination { name: string; img: string; off: string; price: number; r
     <section class="hero">
       <img class="hero-photo" src="/images/falls-hero.jpg" alt="Victoria Falls" />
       <div class="hero-inner">
-      <h1>Explore the World<br />Create <span class="mem">Memories</span></h1>
-      <p class="sub">Discover Zimbabwe's amazing places at exclusive prices and unforgettable experiences.</p>
+      <h1>Find Your Perfect Stay<br />Sleep in <span class="mem">Comfort</span></h1>
+      <p class="sub">Handpicked hotels, safari lodges and rest camps across Zimbabwe — request your stay in under a minute, no account needed.</p>
       <div class="hero-cta">
-        <a class="btn" routerLink="/hotels">Explore Destinations →</a>
-        <a class="btn white" routerLink="/activities">View Packages</a>
+        <a class="btn" routerLink="/hotels">Browse Hotels →</a>
+        <a class="btn white" routerLink="/request-booking">Request Booking</a>
       </div>
       <div class="trusted">
         <span class="faces">
-          <img src="/images/face1.jpg" alt="traveler" /><img src="/images/face2.jpg" alt="traveler" /><img src="/images/face3.jpg" alt="traveler" /><img src="/images/face4.jpg" alt="traveler" />
+          <img src="/images/face1.jpg" alt="guest" /><img src="/images/face2.jpg" alt="guest" /><img src="/images/face3.jpg" alt="guest" /><img src="/images/face4.jpg" alt="guest" />
         </span>
-        <span>Trusted by <b>250,000+ happy travelers</b></span>
+        <span>Trusted by <b>12,000+ happy guests</b></span>
       </div>
-      <div class="offer-badge">★ Special Offer<br />Get up to<br /><b>30% OFF</b><small>On all bookings</small></div>
+      <div class="offer-badge">★ Easy Booking<br /><b>1-minute request</b><small>Confirmed by email</small></div>
     </div></section>
 
     <div class="search-card">
@@ -133,17 +133,16 @@ interface Destination { name: string; img: string; off: string; price: number; r
         <div class="search-grid">
           <label>Check-in<input type="date" [(ngModel)]="checkIn" /></label>
           <label>Check-out<input type="date" [(ngModel)]="checkOut" /></label>
-          <label>Travelers<input type="number" min="1" max="8" [(ngModel)]="guests" /></label>
-          <label>Destination<input value="Anywhere" disabled /></label>
-          <label>&nbsp;<span class="hint">{{ nights }} night(s)</span></label>
+          <label>Guests<input type="number" min="1" max="8" [(ngModel)]="guests" /></label>
+          <label>Length<span class="hint" style="padding:9px 0;">{{ nights }} night(s)</span></label>
           <button class="btn search-now" (click)="searchHotels()">Search Now</button>
         </div>
       } @else if (tab === 'activities') {
         <div class="search-grid">
           <label>Date<input type="date" [(ngModel)]="actDate" /></label>
-          <label>Travelers<input type="number" min="1" [(ngModel)]="actPeople" /></label>
-          <label>Experience<input value="All activities" disabled /></label>
-          <label>&nbsp;</label><label>&nbsp;</label>
+          <label>Guests<input type="number" min="1" [(ngModel)]="actPeople" /></label>
+          <label>How it works<span class="hint" style="padding:9px 0;">Pick &amp; request</span></label>
+          <label>&nbsp;</label>
           <button class="btn search-now" (click)="go('/activities')">Search Now</button>
         </div>
       } @else {
@@ -151,20 +150,20 @@ interface Destination { name: string; img: string; off: string; price: number; r
           <label>Date<input type="date" [(ngModel)]="checkIn" /></label>
           <label>Meal<select [(ngModel)]="meal"><option value="0">Lunch</option><option value="1">Dinner</option></select></label>
           <label>Party size<input type="number" min="1" [(ngModel)]="guests" /></label>
-          <label>&nbsp;</label><label>&nbsp;</label>
+          <label>Booking<span class="hint" style="padding:9px 0;">Request, no prepay</span></label>
           <button class="btn search-now" (click)="go('/dining')">Search Now</button>
         </div>
       }
     </div>
 
     <section class="section">
-      <div class="section-head"><h2>Popular Destinations</h2><a routerLink="/hotels">View All Destinations →</a></div>
+      <div class="section-head"><h2>Where You'll Stay</h2><a routerLink="/hotels">View All Hotels →</a></div>
       <div class="dest-row">
         @for (d of destinations; track d.name) {
           <a class="dest" routerLink="/hotels">
             <img [src]="d.img" [alt]="d.name" loading="lazy" />
             <span class="off">{{ d.off }}</span>
-            <span class="info"><b>{{ d.name }}</b><small>Starting from \${{ d.price }}</small><span class="stars">★★★★★ {{ d.rating }}</span></span>
+            <span class="info"><b>{{ d.name }}</b><small>Stays from \${{ d.price }}</small><span class="stars">★★★★★ {{ d.rating }}</span></span>
           </a>
         }
       </div>
@@ -173,9 +172,9 @@ interface Destination { name: string; img: string; off: string; price: number; r
     <section class="section">
       <div class="deals">
         <div class="deal-banner">
-          <h3>Top Deals<br />This Week</h3>
-          <p>Limited time offers.<br />Don't miss out!</p>
-          <a class="btn white" routerLink="/hotels" style="margin-top:10px">Grab Deals →</a>
+          <h3>Stay Packages<br />This Week</h3>
+          <p>Handpicked combos.<br />Request in one go!</p>
+          <a class="btn white" routerLink="/request-booking" style="margin-top:10px">Request Now →</a>
           <img src="/images/bushplane.jpg" alt="deals" />
         </div>
         <div class="deal"><img src="/images/fallsdeal.jpg" alt="Victoria Falls" /><span class="tag" style="background:#7c3aed">Best Seller</span>
@@ -186,22 +185,22 @@ interface Destination { name: string; img: string; off: string; price: number; r
           <div class="body"><b>Kariba Lake Discovery</b><small>7 Days / 6 Nights</small><div class="price"><s>$1099</s>$899</div><a routerLink="/hotels">View Details →</a></div></div>
       </div>
       <div class="trust">
-        <div><span class="ic">🛡</span><b>Best Price</b><small>Guarantee</small></div>
-        <div><span class="ic">◷</span><b>24/7 Support</b><small>We are here</small></div>
-        <div><span class="ic">🔒</span><b>Secure Booking</b><small>100% safe</small></div>
-        <div><span class="ic">↩</span><b>Easy Cancellation</b><small>Hassle-free</small></div>
-        <div><span class="ic">★</span><b>Handpicked Hotels</b><small>Top Rated</small></div>
+        <div><span class="ic">✎</span><b>No Account Needed</b><small>Request in 1 minute</small></div>
+        <div><span class="ic">✉</span><b>Confirmed by Email</b><small>Our team replies fast</small></div>
+        <div><span class="ic">◷</span><b>Pay on Arrival</b><small>No prepayment</small></div>
+        <div><span class="ic">☎</span><b>Local Support</b><small>Harare based team</small></div>
+        <div><span class="ic">★</span><b>Handpicked Stays</b><small>Top Rated</small></div>
       </div>
     </section>
 
     <section class="section">
-      <div class="section-head"><h2>What Our Travelers Say</h2></div>
+      <div class="section-head"><h2>What Our Guests Say</h2></div>
       <div class="tests">
-        <div class="test"><span class="q">“</span><p>Kudzis made our vacation absolutely perfect! Best service and great deals!</p>
+        <div class="test"><span class="q">“</span><p>Kudzis found us the perfect lodge and sorted everything by email. Flawless stay!</p>
           <div class="who"><img src="/images/face1.jpg" alt="Sophia" /><span><b>Sophia Williams</b><br /><span class="stars">★★★★★</span></span></div></div>
-        <div class="test"><span class="q">“</span><p>Amazing experience and very easy booking process. Highly recommend!</p>
+        <div class="test"><span class="q">“</span><p>Sent a request in the evening, woke up to a confirmed room at the Falls. Highly recommend!</p>
           <div class="who"><img src="/images/face2.jpg" alt="James" /><span><b>James Anderson</b><br /><span class="stars">★★★★★</span></span></div></div>
-        <div class="test"><span class="q">“</span><p>Customer support was awesome and our trip was unforgettable!</p>
+        <div class="test"><span class="q">“</span><p>Dealt with real people who know Zimbabwe. Our issue was sorted the same day.</p>
           <div class="who"><img src="/images/face3.jpg" alt="Olivia" /><span><b>Olivia Martinez</b><br /><span class="stars">★★★★★</span></span></div></div>
       </div>
     </section>
@@ -219,7 +218,7 @@ interface Destination { name: string; img: string; off: string; price: number; r
     </section>
 
     <div class="news"><div class="news-inner">
-      <div><h3>Get Exclusive Offers<br />&amp; Travel Inspiration</h3><small>Subscribe to our newsletter</small></div>
+      <div><h3>New Stays &amp; Seasonal Rates</h3><small>Hear about new places first</small></div>
       <div>
         @if (!subscribed) {
           <div class="news-form"><input placeholder="Enter your email" [(ngModel)]="email" type="email" /><button class="btn" (click)="subscribe()">✈</button></div>

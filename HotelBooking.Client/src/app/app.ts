@@ -9,9 +9,6 @@ import { AuthService } from './core/auth.service';
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   template: `
     <div class="site-header" [class.scrolled]="scrolled">
-    <div class="topbar"><div class="wrap">
-      <span>✈&nbsp; Free cancellation</span><span>★&nbsp; Best price guarantee</span><span>◈&nbsp; Secure booking</span><span>◷&nbsp; 24/7 Customer support</span>
-    </div></div>
     <header class="navbar" [class.transparent]="isHome && !scrolled"><div class="wrap">
       <a class="brand" routerLink="/"><span class="plane">K</span><span><b>Kudzis</b><small>BOOKINGS</small></span></a>
       <button class="burger" (click)="menuOpen = !menuOpen" aria-label="Menu">☰</button>
@@ -46,7 +43,7 @@ import { AuthService } from './core/auth.service';
         <div><h4>Top Destinations</h4><a routerLink="/">Victoria Falls</a><a routerLink="/">Hwange</a><a routerLink="/">Great Zimbabwe</a><a routerLink="/">Mana Pools</a></div>
         <div><h4>Contact Us</h4><p>✆ +263 (242) 123-456</p><p>✉ info&#64;kudzisbookings.co.zw</p><p>123 Samora Machel Ave, Harare, Zimbabwe</p></div>
       </div>
-      <div class="bottom"><span>© 2026 Kudzis Bookings. All rights reserved.</span><span>VISA&nbsp;&nbsp;Mastercard&nbsp;&nbsp;PayPal&nbsp;&nbsp;G Pay</span></div>
+      <div class="bottom"><span>© 2026 Kudzis Bookings. All rights reserved.</span><span>No prepayment · Confirmed by email</span></div>
     </footer>
   `,
 })

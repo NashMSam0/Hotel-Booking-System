@@ -37,7 +37,7 @@ h1, h2, .brand b { font-family: Georgia, 'Times New Roman', serif; letter-spacin
 .navbar.transparent .nav-right > a { color: #fff; }
 .navbar.transparent .nav-right .hint { color: rgba(255,255,255,.9); }
 main { padding-top: 0; }
-.page { max-width: 1200px; margin: 0 auto; padding: 130px 20px 40px; }
+.page { max-width: 1200px; margin: 0 auto; padding: 100px 20px 40px; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--navy); }
 .brand .plane { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--blue-dark), var(--orange)); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; font-weight: 800; }
 .brand b { font-size: 22px; display: block; line-height: 1; }
@@ -58,12 +58,12 @@ main { padding-top: 0; }
 
 /* page cards (booking pages reuse these) */
 .card { background: var(--card); border-radius: var(--radius); padding: 22px; box-shadow: 0 4px 18px rgba(16,28,51,.08); margin: 24px auto; max-width: 1200px; }
-.card.narrow { max-width: 430px; margin: 140px auto 48px; }
+.card.narrow { max-width: 430px; margin: 110px auto 48px; }
 /* fixed header overlaps content: push top-level booking cards below it */
-main > .card:first-child { margin-top: 120px; }
+main > .card:first-child { margin-top: 96px; }
 .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; margin: 10px 0; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-top: 12px; }
-.tile { border: 1px solid #e4eaf6; border-radius: 12px; padding: 14px; background: #fff; }
+.tile { border: 1px solid rgba(255,255,255,.7); border-radius: 12px; padding: 14px; background: rgba(255,255,255,.82); }
 .line { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid #eef2f9; align-items: center; }
 label { display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; font-weight: 600; }
 input, select { padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 9px; font-size: 14px; }
