@@ -1,8 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
-import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-rooms',
@@ -11,17 +10,16 @@ import { AuthService } from '../../core/auth.service';
   template: `
     <div class="page"><div class="card">
       <h2>Our Hotels</h2>
-      <p class="hint">Handpicked stays across Zimbabwe — historic grandeur, safari camps and hillside retreats.</p>
+      <p class="hint">Handpicked stays across Zimbabwe — pick one to send a booking request, no account needed.</p>
       <div class="grid">
-        <div class="tile"><img src="/images/hotel-vicfalls.jpg" alt="Victoria Falls Hotel" loading="lazy" style="width:100%;height:170px;object-fit:cover;border-radius:8px;" /><b>Victoria Falls Hotel</b><br /><small class="hint">Victoria Falls · historic luxury</small></div>
-        <div class="tile"><img src="/images/hotel-entrance.jpg" alt="Hotel entrance" loading="lazy" style="width:100%;height:170px;object-fit:cover;border-radius:8px;" /><b>The Grand Entrance</b><br /><small class="hint">Victoria Falls · colonial charm</small></div>
-        <div class="tile"><img src="/images/hotel-grounds.jpg" alt="Hotel gardens" loading="lazy" style="width:100%;height:170px;object-fit:cover;border-radius:8px;" /><b>Palm Gardens Wing</b><br /><small class="hint">Victoria Falls · garden views</small></div>
-        <div class="tile"><img src="/images/hotel-heritage.jpg" alt="Heritage hotel" loading="lazy" style="width:100%;height:170px;object-fit:cover;border-radius:8px;" /><b>Heritage Block, est. 1904</b><br /><small class="hint">Victoria Falls · landmark stay</small></div>
-        <div class="tile"><img src="/images/hotel-robins.jpg" alt="Robins Safari Camp" loading="lazy" style="width:100%;height:170px;object-fit:cover;border-radius:8px;" /><b>Robins Safari Camp</b><br /><small class="hint">Hwange · bush camp</small></div>
-        <div class="tile"><img src="/images/hotel-maleme.jpg" alt="Maleme Rest Camp" loading="lazy" style="width:100%;height:170px;object-fit:cover;border-radius:8px;" /><b>Maleme Rest Camp</b><br /><small class="hint">Matobo Hills · hillside retreat</small></div>
+        @for (h of hotels; track h.name) {
+          <div class="tile"><img [src]="h.img" [alt]="h.name" loading="lazy" style="width:100%;height:170px;object-fit:cover;border-radius:8px;" /><b>{{ h.name }}</b><br /><small class="hint">{{ h.place }}</small>
+          <div class="row"><button class="btn" (click)="selectHotel(h.name)">Select this hotel</button></div></div>
+        }
       </div>
     </div><div class="card">
       <h2>Hotels — Find Your Stay</h2>
+      <p class="hint">Browse availability, then select a room to send a booking request — no account needed.</p>
       <h3>Availability calendar <small class="hint">(green = rooms free)</small></h3>
       <div class="row">
         <button class="ghost" (click)="shiftMonth(-1)">‹ Prev</button>
@@ -54,14 +52,8 @@ import { AuthService } from '../../core/auth.service';
             <h3>Room {{ r.roomNumber }} — {{ r.roomType }}</h3>
             <p>\${{ r.pricePerNight }}/night · max {{ r.maxGuests }} guests · floor {{ r.floor }}</p>
             <div class="row">
-              <input placeholder="Guest name" [(ngModel)]="form[r.id].guestName" />
-              <input placeholder="Email" [(ngModel)]="form[r.id].email" />
+              <button class="btn" (click)="select(r)">Select this room</button>
             </div>
-            <div class="row">
-              <input placeholder="Phone" [(ngModel)]="form[r.id].phone" />
-              <button [disabled]="!auth.isLoggedIn" (click)="book(r)">Book</button>
-            </div>
-            @if (!auth.isLoggedIn) { <small>Login to book.</small> }
           </div>
         }
       </div>
@@ -70,10 +62,17 @@ import { AuthService } from '../../core/auth.service';
 })
 export class RoomsComponent implements OnInit {
   api = inject(ApiService);
-  auth = inject(AuthService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   rooms = signal<any[]>([]);
-  form: Record<number, any> = {};
+  hotels = [
+    { name: 'Victoria Falls Hotel', img: '/images/hotel-vicfalls.jpg', place: 'Victoria Falls · historic luxury' },
+    { name: 'The Grand Entrance', img: '/images/hotel-entrance.jpg', place: 'Victoria Falls · colonial charm' },
+    { name: 'Palm Gardens Wing', img: '/images/hotel-grounds.jpg', place: 'Victoria Falls · garden views' },
+    { name: 'Heritage Block, est. 1904', img: '/images/hotel-heritage.jpg', place: 'Victoria Falls · landmark stay' },
+    { name: 'Robins Safari Camp', img: '/images/hotel-robins.jpg', place: 'Hwange · bush camp' },
+    { name: 'Maleme Rest Camp', img: '/images/hotel-maleme.jpg', place: 'Matobo Hills · hillside retreat' },
+  ];
   checkIn = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
   checkOut = new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10);
   guests = 2;
@@ -115,25 +114,25 @@ export class RoomsComponent implements OnInit {
     else this.loadAll();
     this.loadCal();
   }
-  private track(r: any) {
-    if (!this.form[r.id]) this.form[r.id] = { guestName: this.auth.user?.fullName ?? '', email: this.auth.user?.email ?? '', phone: '' };
-  }
   loadAll() {
-    this.api.getRooms().subscribe({ next: (d) => { this.rooms.set(d); d.forEach((r) => this.track(r)); } });
+    this.api.getRooms().subscribe({ next: (d) => { this.rooms.set(d); } });
   }
   search() {
     this.msg = ''; this.error = '';
     this.api.getAvailableRooms(this.checkIn, this.checkOut, this.guests).subscribe({
-      next: (d) => { this.rooms.set(d); d.forEach((r) => this.track(r)); this.msg = `${d.length} rooms available`; this.loadCal(); },
+      next: (d) => { this.rooms.set(d); this.msg = `${d.length} rooms available`; this.loadCal(); },
       error: (e) => (this.error = e.error ?? 'Search failed'),
     });
   }
-  book(r: any) {
-    const f = this.form[r.id];
-    this.api.bookRoom({ roomId: r.id, checkIn: this.checkIn, checkOut: this.checkOut, guests: this.guests, guestName: f.guestName, email: f.email, phone: f.phone })
-      .subscribe({
-        next: () => { this.msg = `Room ${r.roomNumber} booked! See My bookings.`; this.search(); },
-        error: (e) => (this.error = e.error ?? 'Booking failed'),
-      });
+  selectHotel(name: string) {
+    this.router.navigate(['/request-booking'], { queryParams: { kind: 'room', hotel: name } });
+  }
+  select(r: any) {
+    this.router.navigate(['/request-booking'], {
+      queryParams: {
+        kind: 'room', roomType: r.roomType, roomNumber: r.roomNumber,
+        checkIn: this.checkIn, checkOut: this.checkOut, guests: this.guests,
+      },
+    });
   }
 }
