@@ -9,6 +9,7 @@ export const routes: Routes = [
   { path: 'dining', loadComponent: () => import('./features/dining/dining.component').then((m) => m.DiningComponent) },
   { path: 'login', loadComponent: () => import('./features/auth/login.component').then((m) => m.LoginComponent) },
   { path: 'register', loadComponent: () => import('./features/auth/register.component').then((m) => m.RegisterComponent) },
+  { path: 'request-booking', loadComponent: () => import('./features/request-booking/request-booking.component').then((m) => m.RequestBookingComponent) },
   { path: 'my-bookings', loadComponent: () => import('./features/my-bookings/my-bookings.component').then((m) => m.MyBookingsComponent), canActivate: [authGuard] },
   { path: '**', redirectTo: '' },
 ];

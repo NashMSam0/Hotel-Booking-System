@@ -33,6 +33,23 @@ import { ApiService } from '../../core/api.service';
         }
       }
 
+      @if (tab === 'Requests') {
+        <button class="ghost" (click)="reloadRequests()">Refresh</button>
+        <div class="row">
+          <label>Filter <select [(ngModel)]="reqFilter" (change)="reloadRequests()">
+            <option value="">All</option><option value="New">New</option><option value="Handled">Handled</option>
+          </select></label>
+        </div>
+        @for (r of requests(); track r.id) {
+          <div class="tile" style="margin-bottom:10px">
+            <b>{{ r.kind }} request #{{ r.id }}</b> · {{ r.status }} · {{ r.createdAt.replace('T',' ').slice(0,16) }}<br />
+            <span>{{ r.name }} · {{ r.email }} · {{ r.phone }}</span>
+            <p style="white-space:pre-wrap">{{ r.preferences }}</p>
+            @if (r.status === 'New') { <button (click)="handleRequest(r.id)">Mark handled</button> }
+          </div>
+        } @empty { <p>No requests.</p> }
+      }
+
       @if (tab === 'Catalog') {
         <h3>Rooms <button class="ghost" (click)="reloadCatalog()">Refresh</button></h3>
         @for (r of catalogRooms(); track r.id) {
@@ -111,7 +128,7 @@ import { ApiService } from '../../core/api.service';
 })
 export class AdminComponent implements OnInit {
   api = inject(ApiService);
-  tabs = ['Bookings', 'Catalog', 'Reports'];
+  tabs = ['Bookings', 'Requests', 'Catalog', 'Reports'];
   tab = 'Bookings';
   msg = ''; error = '';
   rooms = signal<any[]>([]);
@@ -121,6 +138,8 @@ export class AdminComponent implements OnInit {
   catalogActivities = signal<any[]>([]);
   roomTypes = signal<any[]>([]);
   tables = signal<any[]>([]);
+  requests = signal<any[]>([]);
+  reqFilter = '';
   reports: any = null;
   newRoom: any = { number: '', floor: 1, typeId: 1 };
   newType: any = { name: '', price: 100, guests: 2, amenities: '' };
@@ -131,6 +150,7 @@ export class AdminComponent implements OnInit {
   loadTab() {
     this.msg = ''; this.error = '';
     if (this.tab === 'Bookings') this.reload();
+    if (this.tab === 'Requests') this.reloadRequests();
     if (this.tab === 'Catalog') this.reloadCatalog();
     if (this.tab === 'Reports') this.loadReports();
   }
@@ -147,6 +167,12 @@ export class AdminComponent implements OnInit {
   }
   loadReports() {
     this.api.reportsSummary().subscribe({ next: (d) => (this.reports = d), error: () => (this.error = 'Reports failed.') });
+  }
+  reloadRequests() {
+    this.api.bookingRequests(this.reqFilter || undefined).subscribe({ next: (d) => this.requests.set(d) });
+  }
+  handleRequest(id: number) {
+    this.api.handleBookingRequest(id).subscribe({ next: () => { this.ok('Request marked handled.'); this.reloadRequests(); }, error: (e) => this.fail(e) });
   }
   ok(m: string) { this.msg = m; this.error = ''; }
   fail(e: any) { this.error = e.error ?? 'Operation failed.'; }

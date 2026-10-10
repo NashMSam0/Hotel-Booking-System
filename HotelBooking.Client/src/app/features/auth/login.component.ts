@@ -12,18 +12,17 @@ import { AuthService } from '../../core/auth.service';
       <h2>Login</h2>
       <label>Email <input [(ngModel)]="email" type="email" /></label>
       <label>Password <input [(ngModel)]="password" type="password" /></label>
-      <button (click)="submit()">Login</button>
+      <button class="btn" (click)="submit()">Login</button>
       @if (error) { <p class="error">{{ error }}</p> }
-      <p>No account? <a routerLink="/register">Register</a></p>
-      <p class="hint">Seeded admin: admin&#64;hotel.local / Admin123!</p>
+      <p>No account? <a routerLink="/register">Register</a> · or <a routerLink="/request-booking">request a booking</a> without one.</p>
     </div>
   `,
 })
 export class LoginComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
-  email = 'admin@hotel.local';
-  password = 'Admin123!';
+  email = '';
+  password = '';
   error = '';
   submit() {
     this.error = '';

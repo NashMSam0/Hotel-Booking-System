@@ -55,4 +55,5 @@ export class ApiService {
   createTable(body: any) { return this.http.post(`${this.base}/dining/tables`, body); }
   deleteTable(id: number) { return this.http.delete(`${this.base}/dining/tables/${id}`); }
   reportsSummary() { return this.http.get<any>(`${this.base}/reports/summary`); }
+  createBookingRequest(body: any) { return this.http.post(`${this.base}/booking-requests`, body); }
 }

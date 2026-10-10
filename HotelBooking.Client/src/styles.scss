@@ -46,6 +46,8 @@ main { padding-top: 0; }
 .navlinks a { text-decoration: none; color: #33415c; font-weight: 600; font-size: 14.5px; padding-bottom: 4px; }
 .navlinks a.active, .navlinks a:hover { color: var(--blue); border-bottom: 2px solid var(--blue); }
 .nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.burger { display: none; border: 1px solid #e4eaf6; background: #fff; border-radius: 9px; font-size: 20px; padding: 6px 12px; cursor: pointer; color: var(--navy); }
+.navbar.transparent .burger { background: rgba(255,255,255,.15); color: #fff; border-color: rgba(255,255,255,.35); }
 .iconbtn { border: 0; background: #eef3ff; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 16px; }
 .btn { padding: 10px 20px; background: var(--blue); color: #fff; border: 0; border-radius: 999px; cursor: pointer; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-block; }
 .btn:hover { background: var(--blue-dark); }
@@ -54,8 +56,7 @@ main { padding-top: 0; }
 .btn.white { background: #fff; color: var(--navy); }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 
-/* generic page cards (booking pages reuse these) */
-.page { max-width: 1200px; margin: 0 auto; padding: 24px 20px 40px; }
+/* page cards (booking pages reuse these) */
 .card { background: var(--card); border-radius: var(--radius); padding: 22px; box-shadow: 0 4px 18px rgba(16,28,51,.08); margin: 24px auto; max-width: 1200px; }
 .card.narrow { max-width: 430px; margin: 140px auto 48px; }
 /* fixed header overlaps content: push top-level booking cards below it */
@@ -74,11 +75,34 @@ input, select { padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 9px
 .footer h4 { margin: 0 0 10px; font-size: 15px; }
 .footer a, .footer p { color: var(--muted); font-size: 13.5px; text-decoration: none; display: block; margin: 6px 0; }
 .footer a:hover { color: var(--blue); }
-.footer .bottom { max-width: 1200px; margin: 0 auto; padding: 12px 20px 20px; display: flex; justify-content: space-between; color: var(--muted); font-size: 12.5px; border-top: 1px solid #eef2f9; }
+.footer .bottom { max-width: 1200px; margin: 0 auto; padding: 12px 20px 20px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--muted); font-size: 12.5px; border-top: 1px solid #eef2f9; }
+.footer .cols > div:first-child .brand { margin-bottom: 8px; }
 
 @media (max-width: 900px) {
-  .navbar .wrap { gap: 12px; overflow-x: auto; }
-  .navlinks { gap: 12px; margin-left: 0; }
-  .navlinks a { white-space: nowrap; font-size: 13.5px; }
+  .navbar .wrap { gap: 12px; }
   .footer .cols { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+  .burger { display: block; margin-left: auto; }
+  .nav-right { margin-left: 0; }
+  .navbar .wrap { flex-wrap: wrap; }
+  .navlinks { display: none; width: 100%; flex-direction: column; gap: 2px; margin: 4px 0 0; background: rgba(250,246,236,.98); border-radius: 12px; padding: 8px 12px; }
+  .navbar.transparent .navlinks { background: rgba(10,46,40,.96); }
+  .navlinks.open { display: flex; }
+  .navlinks a { padding: 10px 4px; font-size: 15px; border-bottom: 1px solid #eee7d3; }
+  .navlinks a:last-child { border-bottom: 0; }
+  .topbar .wrap { gap: 10px; font-size: 11.5px; }
+  .page { padding: 120px 12px 28px; }
+  .card { padding: 16px; margin: 16px auto; }
+  .card.narrow { margin: 130px auto 32px; }
+  main > .card:first-child { margin-top: 112px; }
+  .grid { grid-template-columns: 1fr; }
+  .search-grid { grid-template-columns: 1fr !important; }
+  .line { flex-direction: column; align-items: stretch; }
+  .line > span:last-child { display: flex; gap: 8px; }
+  h1 { font-size: 34px !important; }
+  h2 { font-size: 22px; }
+  .footer .cols { grid-template-columns: 1fr; }
+  input, select { font-size: 16px; }
 }
