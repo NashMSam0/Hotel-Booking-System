@@ -19,7 +19,7 @@ public class ReportsController : ControllerBase
     {
         var now = DateTime.UtcNow;
         var months = Enumerable.Range(0, 6)
-            .Select(i => new DateTime(now.Year, now.Month, 1).AddMonths(-i))
+            .Select(i => DateTime.SpecifyKind(new DateTime(now.Year, now.Month, 1), DateTimeKind.Utc).AddMonths(-i))
             .Reverse().ToList();
 
         var roomRevenue = new List<object>();

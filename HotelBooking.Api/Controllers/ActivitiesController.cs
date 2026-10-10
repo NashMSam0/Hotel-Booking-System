@@ -54,7 +54,7 @@ public class ActivitiesController : ControllerBase
     {
         var activity = await _db.Activities.FindAsync(id);
         if (activity is null) return NotFound();
-        var day = date.Date;
+        var day = DateTime.SpecifyKind(date.Date, DateTimeKind.Utc);
         var booked = await _db.ActivityBookings
             .Where(b => b.ActivityId == id && b.SlotStart >= day && b.SlotStart < day.AddDays(1) && b.Status != BookingStatus.Cancelled)
             .GroupBy(b => b.SlotStart)

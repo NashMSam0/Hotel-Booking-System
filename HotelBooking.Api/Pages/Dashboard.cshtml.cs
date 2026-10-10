@@ -44,7 +44,7 @@ public class DashboardModel : PageModel
         var now = DateTime.UtcNow;
         for (var i = 5; i >= 0; i--)
         {
-            var start = new DateTime(now.Year, now.Month, 1).AddMonths(-i);
+            var start = DateTime.SpecifyKind(new DateTime(now.Year, now.Month, 1), DateTimeKind.Utc).AddMonths(-i);
             var end = start.AddMonths(1);
             var rooms = await _db.RoomBookings
                 .Where(b => b.Status != BookingStatus.Cancelled && b.CheckIn >= start && b.CheckIn < end)
@@ -56,7 +56,7 @@ public class DashboardModel : PageModel
         }
 
         // Occupancy: booked room-nights this month / available room-nights
-        var mStart = new DateTime(now.Year, now.Month, 1);
+        var mStart = DateTime.SpecifyKind(new DateTime(now.Year, now.Month, 1), DateTimeKind.Utc);
         var mEnd = mStart.AddMonths(1);
         var monthBookings = await _db.RoomBookings
             .Where(b => b.Status != BookingStatus.Cancelled && b.CheckIn < mEnd && mStart < b.CheckOut)

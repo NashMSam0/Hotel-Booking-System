@@ -56,7 +56,7 @@ public class DiningController : ControllerBase
     [HttpGet("available")]
     public async Task<IActionResult> Available([FromQuery] DateTime date, [FromQuery] int mealType, [FromQuery] int partySize)
     {
-        var day = date.Date;
+        var day = DateTime.SpecifyKind(date.Date, DateTimeKind.Utc);
         var bookedTableIds = await _db.DiningBookings
             .Where(b => b.BookingDate.Date == day && (int)b.MealType == mealType && b.Status != BookingStatus.Cancelled && b.TableId != null)
             .Select(b => b.TableId!.Value).ToListAsync();

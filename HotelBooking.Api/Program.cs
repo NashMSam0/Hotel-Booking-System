@@ -1,6 +1,7 @@
 using System.Data.Common;
 using System.Text;
 using System.Text.Json.Serialization;
+using HotelBooking.Api.Json;
 using HotelBooking.Api.Services;
 using HotelBooking.Data.DbContexts;
 using HotelBooking.Data.EntityModels;
@@ -15,7 +16,10 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddJsonOptions(o =>
-    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+{
+    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    o.JsonSerializerOptions.Converters.Add(new UtcDateTimeConverter());
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {

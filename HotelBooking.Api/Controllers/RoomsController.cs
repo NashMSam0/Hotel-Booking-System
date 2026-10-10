@@ -31,6 +31,9 @@ public class RoomsController : ControllerBase
     [HttpGet("available")]
     public async Task<IActionResult> Available([FromQuery] DateTime checkIn, [FromQuery] DateTime checkOut, [FromQuery] int guests = 1)
     {
+        // Query-bound dates arrive Kind=Unspecified; Npgsql needs UTC for timestamptz.
+        checkIn = DateTime.SpecifyKind(checkIn, DateTimeKind.Utc);
+        checkOut = DateTime.SpecifyKind(checkOut, DateTimeKind.Utc);
         if (checkIn.Date >= checkOut.Date) return BadRequest("CheckOut must be after CheckIn.");
         var bookedRoomIds = await _db.RoomBookings
             .Where(b => b.Status != BookingStatus.Cancelled && b.CheckIn < checkOut && checkIn < b.CheckOut)
@@ -47,7 +50,7 @@ public class RoomsController : ControllerBase
     public async Task<IActionResult> Calendar([FromQuery] int year, [FromQuery] int month, [FromQuery] int guests = 1)
     {
         if (month is < 1 or > 12) return BadRequest("Invalid month.");
-        var start = new DateTime(year, month, 1);
+        var start = DateTime.SpecifyKind(new DateTime(year, month, 1), DateTimeKind.Utc);
         var end = start.AddMonths(1);
         var rooms = await _db.Rooms.Include(r => r.RoomType)
             .Where(r => r.IsActive && r.RoomType.MaxGuests >= guests).ToListAsync();
