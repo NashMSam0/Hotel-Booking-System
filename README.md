@@ -5,7 +5,9 @@ Explicit split:
 - **Backend** = `HotelBooking.Api` (ASP.NET Core 8 Web API: Identity + JWT, EF Core, Swagger, Razor ops dashboard)
   + `HotelBooking.Data` (`HotelDbContext : IdentityDbContext`, seed: room types, rooms, 5 Zim activities, tables)
   + `HotelBooking.Core` (pricing, overlap checks, payment + reference helpers)
-- **Frontend** = `HotelBooking.Web` (Angular standalone: landing page, rooms search/book + calendar, activity slots, lunch/dinner tables, my-bookings + payments, admin console)
+- **Frontend (guest site)** = `HotelBooking.Client` (Angular standalone, public: landing page, rooms search/book + calendar, activity slots, lunch/dinner tables, my-bookings + payments)
+- **Frontend (staff console)** = `HotelBooking.Web` (Angular standalone, internal ops: bookings console, catalog management, reports; Admin/Staff roles only)
+- **Backend** = `HotelBooking.Api` (ASP.NET Core 8 Web API: Identity + JWT, EF Core, Swagger, Razor ops dashboard)
 
 ```
 HotelBooking/
@@ -13,7 +15,8 @@ HotelBooking/
   HotelBooking.Api/     <- backend (controllers: auth, rooms/room-bookings, activities/activity-bookings, dining)
   HotelBooking.Data/    <- backend (entities + DbContext + migrations)
   HotelBooking.Core/    <- backend (shared logic)
-  HotelBooking.Web/     <- frontend (Angular: proxy.conf.json -> https://localhost:7064)
+  HotelBooking.Client/  <- public guest site (deploy this to Vercel)
+  HotelBooking.Web/     <- staff ops console (run locally, do not publish publicly)
 ```
 
 ## Run backend
@@ -24,12 +27,19 @@ dotnet run --project HotelBooking.Api
 # Seed admin: admin@hotel.local / Admin123!
 ```
 
-## Run frontend
+## Run frontend (guest site)
 ```powershell
-cd HotelBooking.Web
+cd HotelBooking.Client
 npm install
 npm start     # ng serve --proxy-config proxy.conf.json -> https://localhost:7064
 # http://localhost:4200
+```
+
+## Run staff console
+```powershell
+cd HotelBooking.Web
+npm start     # internal ops console (Admin/Staff login)
+# http://localhost:4200 (or ng serve --port 4201 to run alongside the guest site)
 ```
 
 ## Key rules (verified end-to-end)
@@ -70,6 +80,6 @@ elsewhere (e.g. Azure App Service + Azure SQL).
    ship the dev values in `appsettings.json`).
 2. Put the public API URL into `HotelBooking.Web/src/environments/environment.prod.ts`
    (`apiBaseUrl`, e.g. `https://kudzis-api.azurewebsites.net/api`).
-3. On Vercel: Import the GitHub repo → Root Directory `HotelBooking.Web` →
-   Build Command `npm run build` → Output Directory `dist/HotelBooking.Web/browser`
+3. On Vercel: Import the GitHub repo → Root Directory `HotelBooking.Client` →
+   Build Command `npm run build` → Output Directory `dist/HotelBooking.Client/browser`
    (`vercel.json` in that folder already sets this + SPA rewrites).
