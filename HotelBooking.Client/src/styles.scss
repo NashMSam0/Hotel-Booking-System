@@ -70,6 +70,15 @@ label { display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; font
 input, select { padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 9px; font-size: 14px; }
 .error { color: #b91c1c; } .ok { color: #15803d; } .hint { color: var(--muted); font-size: 13px; }
 
+/* floating WhatsApp chat button */
+.wa-float {
+  position: fixed; right: 18px; bottom: 18px; z-index: 60;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: #25d366; color: #fff; font-size: 26px; text-decoration: none;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,.25);
+}
+
 /* footer */
 .footer { background: #fff; border-top: 1px solid #e4eaf6; margin-top: 10px; }
 .footer .cols { max-width: 1200px; margin: 0 auto; padding: 36px 20px 10px; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1.2fr; gap: 20px; }

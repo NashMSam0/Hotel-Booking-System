@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { ApiService } from '../../core/api.service';
 
 interface Destination { name: string; img: string; off: string; price: number; rating: string; }
 
@@ -77,6 +78,7 @@ interface Destination { name: string; img: string; off: string; price: number; r
     .test p { font-size: 14px; color: #33415c; }
     .test .who { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
     .test .who img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+    .avatar-letter { width: 42px; height: 42px; border-radius: 50%; background: var(--blue); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; }
 
     .news { margin: 36px auto 46px; max-width: 1200px; padding: 0 20px; }
     .news-inner { background: url('/images/karibapan.jpg') center/cover; border-radius: 20px; padding: 40px; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 20px; position: relative; overflow: hidden; }
@@ -196,12 +198,27 @@ interface Destination { name: string; img: string; off: string; price: number; r
     <section class="section">
       <div class="section-head"><h2>What Our Guests Say</h2></div>
       <div class="tests">
-        <div class="test"><span class="q">“</span><p>Kudzis found us the perfect lodge and sorted everything by email. Flawless stay!</p>
-          <div class="who"><img src="/images/face1.jpg" alt="Sophia" /><span><b>Sophia Williams</b><br /><span class="stars">★★★★★</span></span></div></div>
-        <div class="test"><span class="q">“</span><p>Sent a request in the evening, woke up to a confirmed room at the Falls. Highly recommend!</p>
-          <div class="who"><img src="/images/face2.jpg" alt="James" /><span><b>James Anderson</b><br /><span class="stars">★★★★★</span></span></div></div>
-        <div class="test"><span class="q">“</span><p>Dealt with real people who know Zimbabwe. Our issue was sorted the same day.</p>
-          <div class="who"><img src="/images/face3.jpg" alt="Olivia" /><span><b>Olivia Martinez</b><br /><span class="stars">★★★★★</span></span></div></div>
+        @for (r of reviews(); track r.id) {
+          <div class="test"><span class="q">“</span><p>{{ r.comment }}</p>
+            <div class="who"><span class="avatar-letter">{{ r.guestName.slice(0, 1).toUpperCase() }}</span><span><b>{{ r.guestName }}</b><br /><span class="stars">{{ '★★★★★'.slice(0, r.rating) }}</span></span></div></div>
+        } @empty {
+          <div class="test"><span class="q">“</span><p>No guest reviews yet — stayed with us? Leave the first one below.</p></div>
+        }
+      </div>
+      <h3>Leave a review</h3>
+      <div class="card" style="margin-top:12px">
+        <div class="row">
+          <label>Your name <input [(ngModel)]="rev.name" /></label>
+          <label>About <select [(ngModel)]="rev.kind"><option value="stay">A stay</option><option value="room">A room</option><option value="activity">An activity</option><option value="dining">Dining</option></select></label>
+          <label>Rating <select [(ngModel)]="rev.rating"><option [value]="5">★★★★★</option><option [value]="4">★★★★</option><option [value]="3">★★★</option><option [value]="2">★★</option><option [value]="1">★</option></select></label>
+        </div>
+        <div class="row">
+          <label>Booking ref (optional) <input placeholder="e.g. KZ-ABC123" [(ngModel)]="rev.ref" style="width:150px" /></label>
+        </div>
+        <label>Your review <input placeholder="How was it?" [(ngModel)]="rev.comment" style="width:100%" /></label>
+        @if (revMsg) { <p class="ok">{{ revMsg }}</p> }
+        @if (revErr) { <p class="error">{{ revErr }}</p> }
+        <div class="row"><button class="btn" (click)="submitReview()">Submit review</button></div>
       </div>
     </section>
 
@@ -227,8 +244,9 @@ interface Destination { name: string; img: string; off: string; price: number; r
     </div></div>
   `,
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   private router = inject(Router);
+  private api = inject(ApiService);
   tab: 'hotels' | 'activities' | 'dining' = 'hotels';
   checkIn = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
   checkOut = new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10);
@@ -239,6 +257,27 @@ export class HomeComponent {
   email = '';
   subscribed = false;
   openFaq = 0;
+  reviews = signal<any[]>([]);
+  rev: any = { name: '', kind: 'stay', rating: 5, comment: '', ref: '' };
+  revMsg = ''; revErr = '';
+
+  ngOnInit() {
+    this.loadReviews();
+  }
+  loadReviews() {
+    this.api.getReviews().subscribe({ next: (d) => this.reviews.set(d.slice(0, 6)) });
+  }
+  submitReview() {
+    this.revMsg = ''; this.revErr = '';
+    this.api.createReview({
+      kind: this.rev.kind, target: null,
+      bookingReference: this.rev.ref || null, guestName: this.rev.name,
+      rating: +this.rev.rating, comment: this.rev.comment,
+    }).subscribe({
+      next: () => { this.revMsg = 'Thanks for the review!'; this.rev = { name: '', kind: 'stay', rating: 5, comment: '', ref: '' }; this.loadReviews(); },
+      error: (e) => (this.revErr = typeof e.error === 'string' ? e.error : 'Could not submit review.'),
+    });
+  }
 
   faqs = [
     { q: 'When is the best time to visit Victoria Falls?', a: 'For the Falls at their most dramatic (“the smoke that thunders” in full force), visit February to May. For clearer views, photography and adventure activities like rafting, August to October is ideal. Game viewing is best June to October.' },

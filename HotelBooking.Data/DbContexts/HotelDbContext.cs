@@ -17,6 +17,7 @@ public class HotelDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<DiningBooking> DiningBookings => Set<DiningBooking>();
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<BookingRequest> BookingRequests => Set<BookingRequest>();
+    public DbSet<Review> Reviews => Set<Review>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {

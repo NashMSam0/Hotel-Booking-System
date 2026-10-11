@@ -7,6 +7,11 @@ Explicit split:
   + `HotelBooking.Core` (pricing, overlap checks, payment + reference helpers)
 - **Frontend (guest site)** = `HotelBooking.Client` (Angular standalone, public: landing page, rooms search/book + calendar, activity slots, lunch/dinner tables, my-bookings + payments)
 - **Frontend (staff console)** = `HotelBooking.Web` (Angular standalone, internal ops: bookings console, catalog management, reports; Admin/Staff roles only)
+
+Ops notes: set `Whatsapp:BusinessNumber` (e.g. `263...`) to enable WhatsApp
+links; create Staff/Admin accounts from the console's Users tab (Admin only);
+guest reviews are public at `GET /api/reviews` and moderated in the console.
+The guest site is installable (PWA) in production builds.
 - **Backend** = `HotelBooking.Api` (ASP.NET Core 8 Web API: Identity + JWT, EF Core, Swagger, Razor ops dashboard)
 
 ```

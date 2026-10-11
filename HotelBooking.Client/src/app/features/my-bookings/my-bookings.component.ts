@@ -17,6 +17,7 @@ import { ApiService } from '../../core/api.service';
         <span>
           @if (b.status !== 2 && b.balance > 0) { <button (click)="startPay('room', b)">Pay</button> }
           @if (b.status !== 2) { <button class="ghost" (click)="cancelRoom(b.id)">Cancel</button> }
+          @if (bizNumber) { <a class="btn ghost" style="padding:9px 16px" target="_blank" rel="noopener" [href]="waAbout('room', b.reference)">WhatsApp</a> }
         </span></div>
         @if (payFor?.kind === 'room' && payFor?.id === b.id) {
           <div class="row">
@@ -33,6 +34,7 @@ import { ApiService } from '../../core/api.service';
         <span>
           @if (b.status !== 2 && b.balance > 0) { <button (click)="startPay('activity', b)">Pay</button> }
           @if (b.status !== 2) { <button class="ghost" (click)="cancelActivity(b.id)">Cancel</button> }
+          @if (bizNumber) { <a class="btn ghost" style="padding:9px 16px" target="_blank" rel="noopener" [href]="waAbout('activity', b.reference)">WhatsApp</a> }
         </span></div>
         @if (payFor?.kind === 'activity' && payFor?.id === b.id) {
           <div class="row">
@@ -46,7 +48,10 @@ import { ApiService } from '../../core/api.service';
       <h3>Dining</h3>
       @for (b of dining(); track b.id) {
         <div class="line"><span><b>{{ b.reference }}</b> {{ b.bookingDate.slice(0,10) }} {{ b.mealType === 0 ? 'Lunch' : 'Dinner' }} × {{ b.partySize }} · Table {{ b.table?.tableNumber ?? '—' }} · {{ status(b.status) }} · free</span>
-        @if (b.status !== 2) { <button class="ghost" (click)="cancelDining(b.id)">Cancel</button> } </div>
+        <span>
+          @if (b.status !== 2) { <button class="ghost" (click)="cancelDining(b.id)">Cancel</button> }
+          @if (bizNumber) { <a class="btn ghost" style="padding:9px 16px" target="_blank" rel="noopener" [href]="waAbout('dining', b.reference)">WhatsApp</a> }
+        </span></div>
       } @empty { <p>No dining bookings.</p> }
     </div>
   `,
@@ -61,8 +66,16 @@ export class MyBookingsComponent implements OnInit {
   payAmount = 0;
   payMsg = '';
   payErr = '';
+  bizNumber = '';
 
-  ngOnInit() { this.reload(); }
+  ngOnInit() {
+    this.reload();
+    this.api.siteConfig().subscribe({ next: (c) => (this.bizNumber = c.whatsappEnabled ? c.whatsappNumber : '') });
+  }
+  waAbout(kind: string, reference: string): string {
+    const text = encodeURIComponent(`Hi Kudzis Bookings! About my ${kind} booking ${reference}.`);
+    return `https://wa.me/${this.bizNumber}?text=${text}`;
+  }
   status(s: number) { return s === 0 ? 'Pending' : s === 1 ? 'Confirmed' : 'Cancelled'; }
   payStatus(s: number) { return s === 0 ? 'Unpaid' : s === 1 ? 'Deposit paid' : s === 2 ? 'Paid' : 'Refunded'; }
   reload() {

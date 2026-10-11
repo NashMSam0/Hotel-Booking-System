@@ -60,4 +60,11 @@ export class ApiService {
     return this.http.get<any[]>(`${this.base}/booking-requests${q}`);
   }
   handleBookingRequest(id: number) { return this.http.post(`${this.base}/booking-requests/${id}/handle`, {}); }
+
+  getReviews() { return this.http.get<any[]>(`${this.base}/reviews`); }
+  moderateReview(id: number, approved: boolean) { return this.http.post(`${this.base}/reviews/${id}/moderate`, { approved }); }
+  deleteReview(id: number) { return this.http.delete(`${this.base}/reviews/${id}`); }
+  listUsers() { return this.http.get<any[]>(`${this.base}/auth/users`); }
+  createUser(body: any) { return this.http.post(`${this.base}/auth/staff`, body); }
+  changeUserRole(id: string, role: string) { return this.http.post(`${this.base}/auth/users/${id}/role`, { role }); }
 }

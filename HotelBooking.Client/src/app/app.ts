@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { AuthService } from './core/auth.service';
+import { ApiService } from './core/api.service';
 
 @Component({
   selector: 'app-root',
@@ -32,6 +33,9 @@ import { AuthService } from './core/auth.service';
     </div></header>
     </div>
     <main><router-outlet /></main>
+    @if (waNumber) {
+      <a class="wa-float" [href]="waBizLink" target="_blank" rel="noopener" aria-label="Chat to us on WhatsApp" title="Chat to us on WhatsApp">✆</a>
+    }
     <footer class="footer">
       <div class="cols">
         <div>
@@ -49,13 +53,21 @@ import { AuthService } from './core/auth.service';
 })
 export class App implements OnInit {
   auth = inject(AuthService);
+  private api = inject(ApiService);
   private router = inject(Router);
   scrolled = false;
   isHome = true;
   menuOpen = false;
+  waNumber = '';
+
+  get waBizLink(): string {
+    const text = encodeURIComponent(`Hi Kudzis Bookings! I'd like to make a booking.`);
+    return `https://wa.me/${this.waNumber}?text=${text}`;
+  }
 
   ngOnInit() {
     this.isHome = this.router.url === '/';
+    this.api.siteConfig().subscribe({ next: (c) => (this.waNumber = c.whatsappEnabled ? c.whatsappNumber : '') });
     this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe((e) => {
       this.isHome = (e as NavigationEnd).urlAfterRedirects === '/';
       this.menuOpen = false;

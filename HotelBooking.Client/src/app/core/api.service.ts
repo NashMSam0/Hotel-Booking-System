@@ -56,4 +56,10 @@ export class ApiService {
   deleteTable(id: number) { return this.http.delete(`${this.base}/dining/tables/${id}`); }
   reportsSummary() { return this.http.get<any>(`${this.base}/reports/summary`); }
   createBookingRequest(body: any) { return this.http.post(`${this.base}/booking-requests`, body); }
+
+  getReviews(kind?: string) {
+    return this.http.get<any[]>(`${this.base}/reviews${kind ? `?kind=${kind}` : ''}`);
+  }
+  createReview(body: any) { return this.http.post(`${this.base}/reviews`, body); }
+  siteConfig() { return this.http.get<any>(`${this.base}/site/config`); }
 }

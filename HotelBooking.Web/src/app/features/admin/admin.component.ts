@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/api.service';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-admin',
@@ -21,15 +22,18 @@ import { ApiService } from '../../core/api.service';
         <button class="ghost" (click)="reload()">Refresh</button>
         <h3>Rooms ({{ rooms().length }})</h3>
         @for (b of rooms(); track b.id) {
-          <div class="line"><span><b>{{ b.reference }}</b> {{ b.guestName }} · Room {{ b.room?.roomNumber }} · {{ b.checkIn.slice(0,10) }}→{{ b.checkOut.slice(0,10) }} · \${{ b.totalPrice }} · {{ b.paymentStatus === 2 ? 'Paid' : b.paymentStatus === 1 ? 'Deposit' : 'Unpaid' }}</span></div>
+          <div class="line"><span><b>{{ b.reference }}</b> {{ b.guestName }} · Room {{ b.room?.roomNumber }} · {{ b.checkIn.slice(0,10) }}→{{ b.checkOut.slice(0,10) }} · \${{ b.totalPrice }} · {{ b.paymentStatus === 2 ? 'Paid' : b.paymentStatus === 1 ? 'Deposit' : 'Unpaid' }}</span>
+          <a class="btn ghost" style="padding:9px 16px" target="_blank" rel="noopener" [href]="waGuest(b.phone, 'Hi ' + b.guestName + '! Kudzis Bookings here about your stay ' + b.reference + ' (' + b.checkIn.slice(0,10) + ' to ' + b.checkOut.slice(0,10) + ').')">WhatsApp</a></div>
         }
         <h3>Activities ({{ activities().length }})</h3>
         @for (b of activities(); track b.id) {
-          <div class="line"><span><b>{{ b.reference }}</b> {{ b.guestName }} · {{ b.activity?.name }} · {{ b.slotStart.replace('T',' ') }} ×{{ b.participants }}</span></div>
+          <div class="line"><span><b>{{ b.reference }}</b> {{ b.guestName }} · {{ b.activity?.name }} · {{ b.slotStart.replace('T',' ') }} ×{{ b.participants }}</span>
+          <a class="btn ghost" style="padding:9px 16px" target="_blank" rel="noopener" [href]="waGuest(b.phone, 'Hi ' + b.guestName + '! Kudzis Bookings here about ' + b.activity?.name + ' ' + b.reference + '.')">WhatsApp</a></div>
         }
         <h3>Dining ({{ dining().length }})</h3>
         @for (b of dining(); track b.id) {
-          <div class="line"><span><b>{{ b.reference }}</b> {{ b.guestName }} · {{ b.bookingDate.slice(0,10) }} {{ b.mealType === 0 ? 'Lunch' : 'Dinner' }} ×{{ b.partySize }} · T{{ b.table?.tableNumber ?? '—' }}</span></div>
+          <div class="line"><span><b>{{ b.reference }}</b> {{ b.guestName }} · {{ b.bookingDate.slice(0,10) }} {{ b.mealType === 0 ? 'Lunch' : 'Dinner' }} ×{{ b.partySize }} · T{{ b.table?.tableNumber ?? '—' }}</span>
+          <a class="btn ghost" style="padding:9px 16px" target="_blank" rel="noopener" [href]="waGuest(b.phone, 'Hi ' + b.guestName + '! Kudzis Bookings here about your table ' + b.reference + ' on ' + b.bookingDate.slice(0,10) + '.')">WhatsApp</a></div>
         }
       }
 
@@ -45,7 +49,10 @@ import { ApiService } from '../../core/api.service';
             <b>{{ r.kind }} request #{{ r.id }}</b> · {{ r.status }} · {{ r.createdAt.replace('T',' ').slice(0,16) }}<br />
             <span>{{ r.name }} · {{ r.email }} · {{ r.phone }}</span>
             <p style="white-space:pre-wrap">{{ r.preferences }}</p>
-            @if (r.status === 'New') { <button (click)="handleRequest(r.id)">Mark handled</button> }
+            <div class="row">
+              @if (r.status === 'New') { <button (click)="handleRequest(r.id)">Mark handled</button> }
+              <a class="btn ghost" target="_blank" rel="noopener" [href]="waGuest(r.phone, 'Hi ' + r.name + '! Kudzis Bookings here about your ' + r.kind + ' request.')">WhatsApp guest</a>
+            </div>
           </div>
         } @empty { <p>No requests.</p> }
       }
@@ -123,12 +130,51 @@ import { ApiService } from '../../core/api.service';
           }
         }
       }
+
+      @if (tab === 'Reviews') {
+        <button class="ghost" (click)="reloadReviews()">Refresh</button>
+        @for (r of reviews(); track r.id) {
+          <div class="tile" style="margin-bottom:10px">
+            <b>{{ r.guestName }}</b> · {{ r.kind }}{{ r.target ? ' · ' + r.target : '' }} · {{ '★★★★★'.slice(0, r.rating) }} · {{ r.approved ? 'visible' : 'hidden' }}<br />
+            <span class="hint">{{ r.createdAt.replace('T',' ').slice(0,16) }}{{ r.bookingReference ? ' · ref ' + r.bookingReference : '' }}</span>
+            <p style="white-space:pre-wrap">{{ r.comment }}</p>
+            <div class="row">
+              <button class="ghost" (click)="moderateReview(r.id, !r.approved)">{{ r.approved ? 'Hide' : 'Approve' }}</button>
+              <button class="ghost" (click)="deleteReview(r.id)">Delete</button>
+            </div>
+          </div>
+        } @empty { <p>No reviews.</p> }
+      }
+
+      @if (tab === 'Users') {
+        @if (isAdmin) {
+          <button class="ghost" (click)="reloadUsers()">Refresh</button>
+          <h3>Team accounts</h3>
+          @for (u of users(); track u.id) {
+            <div class="line"><span>{{ u.fullName }} · {{ u.email }} · {{ (u.roles ?? []).join(', ') }}</span>
+            <span>
+              <select [ngModel]="currentRole(u)" (ngModelChange)="changeRole(u.id, $event)">
+                <option>Guest</option><option>Staff</option><option>Admin</option>
+              </select>
+            </span></div>
+          }
+          <h3>Add staff / admin</h3>
+          <div class="row">
+            <input placeholder="Full name" [(ngModel)]="newUser.name" />
+            <input placeholder="Email" [(ngModel)]="newUser.email" type="email" />
+            <input placeholder="Password (min 6)" [(ngModel)]="newUser.password" type="password" />
+            <select [(ngModel)]="newUser.role"><option>Staff</option><option>Admin</option></select>
+            <button (click)="addUser()">Create account</button>
+          </div>
+        } @else { <p>Admins only.</p> }
+      }
     </div>
   `,
 })
 export class AdminComponent implements OnInit {
   api = inject(ApiService);
-  tabs = ['Bookings', 'Requests', 'Catalog', 'Reports'];
+  private auth = inject(AuthService);
+  tabs = ['Bookings', 'Requests', 'Catalog', 'Reports', 'Reviews', 'Users'];
   tab = 'Bookings';
   msg = ''; error = '';
   rooms = signal<any[]>([]);
@@ -140,6 +186,9 @@ export class AdminComponent implements OnInit {
   tables = signal<any[]>([]);
   requests = signal<any[]>([]);
   reqFilter = '';
+  reviews = signal<any[]>([]);
+  users = signal<any[]>([]);
+  newUser: any = { name: '', email: '', password: '', role: 'Staff' };
   reports: any = null;
   newRoom: any = { number: '', floor: 1, typeId: 1 };
   newType: any = { name: '', price: 100, guests: 2, amenities: '' };
@@ -147,12 +196,20 @@ export class AdminComponent implements OnInit {
   newTable: any = { number: '', seats: 2, location: 'Indoor' };
 
   ngOnInit() { this.reload(); }
+  get isAdmin() { return this.auth.isAdmin; }
+  waGuest(phone: string, text: string): string {
+    const digits = (phone || '').replace(/\D/g, '');
+    const intl = digits.startsWith('0') ? '263' + digits.slice(1) : digits;
+    return `https://wa.me/${intl}?text=${encodeURIComponent(text)}`;
+  }
   loadTab() {
     this.msg = ''; this.error = '';
     if (this.tab === 'Bookings') this.reload();
     if (this.tab === 'Requests') this.reloadRequests();
     if (this.tab === 'Catalog') this.reloadCatalog();
     if (this.tab === 'Reports') this.loadReports();
+    if (this.tab === 'Reviews') this.reloadReviews();
+    if (this.tab === 'Users') this.reloadUsers();
   }
   reload() {
     this.api.allRoomBookings().subscribe({ next: (d) => this.rooms.set(d) });
@@ -200,5 +257,25 @@ export class AdminComponent implements OnInit {
   }
   deactivateTable(id: number) {
     this.api.deleteTable(id).subscribe({ next: () => { this.ok('Table deactivated.'); this.reloadCatalog(); }, error: (e) => this.fail(e) });
+  }
+  reloadReviews() {
+    this.api.getReviews().subscribe({ next: (d) => this.reviews.set(d) });
+  }
+  moderateReview(id: number, approved: boolean) {
+    this.api.moderateReview(id, approved).subscribe({ next: () => this.reloadReviews(), error: (e) => this.fail(e) });
+  }
+  deleteReview(id: number) {
+    this.api.deleteReview(id).subscribe({ next: () => { this.ok('Review deleted.'); this.reloadReviews(); }, error: (e) => this.fail(e) });
+  }
+  reloadUsers() {
+    this.api.listUsers().subscribe({ next: (d) => this.users.set(d), error: () => (this.error = 'Admins only.') });
+  }
+  currentRole(u: any): string { return (u.roles ?? [])[0] ?? 'Guest'; }
+  changeRole(id: string, role: string) {
+    this.api.changeUserRole(id, role).subscribe({ next: () => { this.ok('Role updated.'); this.reloadUsers(); }, error: (e) => this.fail(e) });
+  }
+  addUser() {
+    this.api.createUser({ email: this.newUser.email, password: this.newUser.password, fullName: this.newUser.name, role: this.newUser.role })
+      .subscribe({ next: () => { this.ok('Account created.'); this.newUser = { name: '', email: '', password: '', role: 'Staff' }; this.reloadUsers(); }, error: (e) => this.fail(e) });
   }
 }

@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": ["/favicon.ico", "/icon.svg", "/manifest.webmanifest", "/index.html", "/*.css", "/*.js"]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": ["/images/**", "/icons/**", "/*.woff2"]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api",
+      "urls": ["https://kudzis-api.onrender.com/api/**", "/api/**"],
+      "cacheConfig": { "strategy": "freshness", "maxSize": 50, "maxAge": "5m", "timeout": "10s" }
+    }
+  ]
+}
