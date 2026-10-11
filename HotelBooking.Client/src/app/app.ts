@@ -10,7 +10,7 @@ import { AuthService } from './core/auth.service';
   template: `
     <div class="site-header" [class.scrolled]="scrolled">
     <header class="navbar" [class.transparent]="isHome && !scrolled"><div class="wrap">
-      <a class="brand" routerLink="/"><span class="plane">K</span><span><b>Kudzis</b><small>BOOKINGS</small></span></a>
+      <a class="brand" routerLink="/"><img src="/icon.svg" alt="Kudzis" class="logo-mark" /><span><b>Kudzis</b><small>BOOKINGS</small></span></a>
       <button class="burger" (click)="menuOpen = !menuOpen" aria-label="Menu">☰</button>
       <nav class="navlinks" [class.open]="menuOpen">
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>
@@ -35,7 +35,7 @@ import { AuthService } from './core/auth.service';
     <footer class="footer">
       <div class="cols">
         <div>
-          <a class="brand" routerLink="/"><span class="plane">K</span><span><b>Kudzis</b><small>BOOKINGS</small></span></a>
+          <a class="brand" routerLink="/"><img src="/icon.svg" alt="Kudzis" class="logo-mark" /><span><b>Kudzis</b><small>BOOKINGS</small></span></a>
           <p>Your trusted travel partner for unforgettable journeys.</p>
         </div>
         <div><h4>Company</h4><a routerLink="/">About Us</a><a routerLink="/hotels">Hotels</a><a routerLink="/activities">Activities</a><a routerLink="/dining">Dining</a></div>

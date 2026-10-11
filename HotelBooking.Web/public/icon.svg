@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Kudzis Bookings logo">
+  <circle cx="32" cy="32" r="30" fill="#0a2e28"/>
+  <circle cx="32" cy="32" r="27.5" fill="none" stroke="#c9974f" stroke-width="2.5"/>
+  <circle cx="43" cy="21" r="5.5" fill="#c9974f"/>
+  <path d="M14 37 L32 22 L50 37 Z" fill="#c9974f"/>
+  <rect x="22" y="37" width="20" height="11" fill="#f6edda"/>
+  <rect x="29.5" y="40" width="5" height="8" fill="#0a2e28"/>
+  <line x1="16" y1="50" x2="48" y2="50" stroke="#f6edda" stroke-width="2" stroke-linecap="round"/>
+</svg>

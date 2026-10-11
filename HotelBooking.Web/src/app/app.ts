@@ -12,7 +12,7 @@ import { AuthService } from './core/auth.service';
       <span>Staff console — Kudzis Bookings operations</span>
     </div></div>
     <header class="navbar"><div class="wrap">
-      <a class="brand" routerLink="/"><span class="plane">K</span><span><b>Kudzis</b><small>OPS</small></span></a>
+      <a class="brand" routerLink="/"><img src="/icon.svg" alt="Kudzis" class="logo-mark" /><span><b>Kudzis</b><small>OPS</small></span></a>
       <nav class="navlinks">
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Console</a>
         <a routerLink="/hotels" routerLinkActive="active">Hotels</a>
